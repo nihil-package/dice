@@ -28,7 +28,8 @@
     "build": "yarn clean && yarn build:tsc && yarn build:js",
     "build:tsc": "yarn tsc --emitDeclarationOnly",
     "build:js": "node build.js",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist",
+    "publish": "npm publish --access=public"
   },
   "keywords": [],
   "author": "nihilncunia",
