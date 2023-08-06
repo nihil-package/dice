@@ -1,4 +1,4 @@
-function roll(dices: number = 1, sides: number) {
+function roll(sides: number, dices: number = 1) {
   const results = [];
 
   for (let i = 0; i < dices; i++) {
