@@ -74,6 +74,11 @@ function roll(dice: string): RollResult {
   };
 }
 
+const preset = [
+  'D2', 'D4', 'D6', 'D8', 'D10', 'D12', 'D20', '2D4', '2D8', '2D10', '3D4', '3D6', '3D8', 'D100',
+];
+
 export {
-  diceRoll
+  diceRoll,
+  preset
 };
