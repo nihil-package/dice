@@ -28,16 +28,23 @@
     "build": "yarn clean && yarn build:tsc && yarn build:js",
     "build:tsc": "yarn tsc --emitDeclarationOnly",
     "build:js": "node build.js",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist",
+    "start": "ts-node src/index.ts"
   },
   "keywords": [],
   "author": "nihilncunia",
   "license": "MIT",
-  "dependencies": {
-    "@types/node": "^20.4.8",
-    "typescript": "^5.1.6"
-  },
+  "dependencies": {},
   "devDependencies": {
-    "esbuild": "^0.18.18"
+    "@types/node": "^20.4.9",
+    "@typescript-eslint/eslint-plugin": "^6.3.0",
+    "@typescript-eslint/parser": "^6.3.0",
+    "esbuild": "^0.19.0",
+    "eslint": "^8.46.0",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-plugin-html": "^7.1.0",
+    "eslint-plugin-import": "^2.28.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.1.6"
   }
 }
