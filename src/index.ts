@@ -1,29 +1,27 @@
-import { Dice, RollResult } from './@types/index';
+import type { Dice, RollResult } from './@types';
 
-function diceRoll(formulas: string): Dice[] {
-  const dices1 = formulas
-    .trim()
-    .replace(/[dㅇ]/g, 'D')
-    .split(' ');
+function rollDice(dice: string): RollResult {
+  const [ dices, sides, ] = dice.split('D');
+  const details: number[] = [];
 
-  const results: Dice[] = [];
+  const newDices = dices || '1';
+  const sign = +newDices > 0 ? '+' : '-';
 
-  dices1.forEach((diceString) => {
-    if (diceString.includes('*')) {
-      const [ formula, loop, ] = diceString.split('*');
+  for (let i = 0; i < Math.abs(+newDices); i++) {
+    const number = Math.ceil(Math.random() * +sides);
+    details.push(number);
+  }
 
-      for (let i = 0; i < +loop; i++) {
-        results.push(dice(formula));
-      }
-    } else {
-      results.push(dice(diceString));
-    }
-  });
+  const total = details.reduce((pre, curr) => pre + curr, 0);
 
-  return results;
+  return {
+    dice,
+    total: sign === '+' ? total : -total,
+    details,
+  };
 }
 
-function dice(diceFormula: string): Dice {
+function rollDiceMod(diceFormula: string): Dice {
   const matchReg = /([+-]?\d*[ㅇdD]\d+|[+-]?\d+)/g;
 
   const result = diceFormula
@@ -32,11 +30,11 @@ function dice(diceFormula: string): Dice {
   const diceDetails: RollResult[] = [];
   const modArray: number[] = [];
 
-  result.forEach((item) => {
+  result?.forEach((item) => {
     if (item.includes('D')) {
       const [ n1, n2, ] = item.split('D');
 
-      diceDetails.push(roll(`${n1 || 1}D${n2}`));
+      diceDetails.push(rollDice(`${n1 || 1}D${n2}`));
     } else {
       modArray.push(+item);
     }
@@ -54,31 +52,49 @@ function dice(diceFormula: string): Dice {
   };
 }
 
-function roll(dice: string): RollResult {
-  const [ dices, sides, ] = dice.split('D');
-  const details = [];
+function rollAllDices(formulas: string): Dice[] {
+  const dices1 = formulas
+    .trim()
+    .replace(/[dㅇ]/g, 'D')
+    .split(' ');
 
-  const sign = +dices > 0 ? '+' : '-';
+  const results: Dice[] = [];
 
-  for (let i = 0; i < Math.abs(+dices); i++) {
-    const number = Math.ceil(Math.random() * +sides);
-    details.push(number);
-  }
+  dices1.forEach((diceString) => {
+    if (diceString.includes('*')) {
+      const [ formula, loop, ] = diceString.split('*');
 
-  const total = details.reduce((pre, curr) => pre + curr, 0);
+      for (let i = 0; i < +loop; i++) {
+        results.push(rollDiceMod(formula));
+      }
+    } else {
+      results.push(rollDiceMod(diceString));
+    }
+  });
 
-  return {
-    dice,
-    total: sign === '+' ? total : -total,
-    details,
-  };
+  return results;
 }
 
-const preset = [
-  'D2', 'D4', 'D6', 'D8', 'D10', 'D12', 'D20', '2D4', '2D8', '2D10', '3D4', '3D6', '3D8', 'D100',
-];
+const preset = {
+  diceD2: () => rollDice('D2'),
+  diceD4: () => rollDice('D4'),
+  diceD6: () => rollDice('D6'),
+  diceD8: () => rollDice('D8'),
+  diceD10: () => rollDice('D10'),
+  diceD12: () => rollDice('D12'),
+  diceD20: () => rollDice('D20'),
+  dice2D4: () => rollDice('2D4'),
+  dice2D8: () => rollDice('2D8'),
+  dice2D10: () => rollDice('2D10'),
+  dice3D4: () => rollDice('3D4'),
+  dice3D6: () => rollDice('3D6'),
+  dice3D8: () => rollDice('3D8'),
+  diceD100: () => rollDice('D100'),
+};
 
 export {
-  diceRoll,
+  rollDice,
+  rollDiceMod,
+  rollAllDices,
   preset
 };

@@ -31,7 +31,13 @@
     "clean": "rm -rf dist",
     "start": "ts-node src/index.ts"
   },
-  "keywords": [],
+  "keywords": [
+    "dice",
+    "roll",
+    "D&D",
+    "D20",
+    "TRPG"
+  ],
   "author": "nihilncunia",
   "license": "MIT",
   "dependencies": {},
