@@ -1,14 +1,14 @@
-type RollResult = {
+type RollDiceResult = {
   dice: string;
   total: number;
   details: number[];
 };
 
-type Dice = {
+type RollDiceModResult = {
   formula: string;
   diceTotal: number;
-  diceDetails: RollResult[];
+  diceDetails: RollDiceResult[];
   modDetails: number[];
 };
 
-export type { Dice, RollResult };
+export type { RollDiceModResult, RollDiceResult };

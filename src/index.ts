@@ -1,6 +1,6 @@
-import type { Dice, RollResult } from './@types';
+import type { RollDiceModResult, RollDiceResult } from './@types';
 
-function rollDice(dice: string): RollResult {
+function rollDice(dice: string): RollDiceResult {
   const [ dices, sides, ] = dice.split('D');
   const details: number[] = [];
 
@@ -21,20 +21,21 @@ function rollDice(dice: string): RollResult {
   };
 }
 
-function rollDiceMod(diceFormula: string): Dice {
+function rollDiceMod(diceFormula: string): RollDiceModResult {
   const matchReg = /([+-]?\d*[ㅇdD]\d+|[+-]?\d+)/g;
 
   const result = diceFormula
     .match(matchReg)?.filter((item) => item !== '');
 
-  const diceDetails: RollResult[] = [];
+  const diceDetails: RollDiceResult[] = [];
   const modArray: number[] = [];
 
   result?.forEach((item) => {
     if (item.includes('D')) {
       const [ n1, n2, ] = item.split('D');
 
-      diceDetails.push(rollDice(`${n1 || 1}D${n2}`));
+      const newN1 = n1.replace(/[+-]/g, '');
+      diceDetails.push(rollDice(`${newN1}D${n2}`));
     } else {
       modArray.push(+item);
     }
@@ -52,13 +53,13 @@ function rollDiceMod(diceFormula: string): Dice {
   };
 }
 
-function rollAllDices(formulas: string): Dice[] {
+function rollAllDices(formulas: string): RollDiceModResult[] {
   const dices1 = formulas
     .trim()
     .replace(/[dㅇ]/g, 'D')
     .split(' ');
 
-  const results: Dice[] = [];
+  const results: RollDiceModResult[] = [];
 
   dices1.forEach((diceString) => {
     if (diceString.includes('*')) {
@@ -91,6 +92,8 @@ const preset = {
   dice3D8: () => rollDice('3D8'),
   diceD100: () => rollDice('D100'),
 };
+
+console.log(preset.diceD10());
 
 export {
   rollDice,
