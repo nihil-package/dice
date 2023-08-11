@@ -93,8 +93,6 @@ const preset = {
   diceD100: () => rollDice('D100'),
 };
 
-console.log(preset.diceD10());
-
 export {
   rollDice,
   rollDiceMod,
