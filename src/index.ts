@@ -1,6 +1,8 @@
 import type { RollDiceModResult, RollDiceResult } from './@types';
 
 function rollDice(dice: string): RollDiceResult {
+  dice = dice.replace(/[dㅇ]/g, 'D');
+
   const [ dices, sides, ] = dice.split('D');
   const details: number[] = [];
 
