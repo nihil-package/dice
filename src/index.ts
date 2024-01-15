@@ -26,7 +26,7 @@ function rollDice(dice: string): RollDiceResult {
 function rollDiceMod(diceFormula: string): RollDiceModResult {
   const matchReg = /([+-]?\d*[ㅇdD]\d+|[+-]?\d+)/g;
 
-  const result = diceFormula
+  const result = diceFormula.replace(/[dㅇ]/g, 'D')
     .match(matchReg)?.filter((item) => item !== '');
 
   const diceDetails: RollDiceResult[] = [];
