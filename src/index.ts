@@ -1,6 +1,6 @@
 import type { RollDiceModResult, RollDiceResult } from './@types';
 
-function rollDice(dice: string): RollDiceResult {
+function rollDice(dice: string, rollType = 'default'): RollDiceResult {
   dice = dice.replace(/[dㅇ]/g, 'D');
 
   const [ dices, sides, ] = dice.split('D');
@@ -9,9 +9,15 @@ function rollDice(dice: string): RollDiceResult {
   const newDices = dices || '1';
   const sign = +newDices > 0 ? '+' : '-';
 
-  for (let i = 0; i < Math.abs(+newDices); i++) {
-    const number = Math.ceil(Math.random() * +sides);
-    details.push(number);
+  if (rollType === 'min') {
+    details.push(1);
+  } else if (rollType === 'max') {
+    details.push(+sides);
+  } else {
+    for (let i = 0; i < Math.abs(+newDices); i++) {
+      const number = Math.ceil(Math.random() * +sides);
+      details.push(number);
+    }
   }
 
   const total = details.reduce((pre, curr) => pre + curr, 0);
@@ -23,7 +29,7 @@ function rollDice(dice: string): RollDiceResult {
   };
 }
 
-function rollDiceMod(diceFormula: string): RollDiceModResult {
+function rollDiceMod(diceFormula: string, rollType = 'default'): RollDiceModResult {
   const matchReg = /([+-]?\d*[ㅇdD]\d+|[+-]?\d+)/g;
 
   diceFormula = diceFormula.replace(/[dㅇ]/g, 'D');
@@ -39,7 +45,7 @@ function rollDiceMod(diceFormula: string): RollDiceModResult {
       const [ n1, n2, ] = item.split('D');
 
       const newN1 = n1.replace(/[+-]/g, '');
-      diceDetails.push(rollDice(`${newN1}D${n2}`));
+      diceDetails.push(rollDice(`${newN1}D${n2}`, rollType));
     } else {
       modArray.push(+item);
     }
@@ -57,7 +63,7 @@ function rollDiceMod(diceFormula: string): RollDiceModResult {
   };
 }
 
-function rollAllDices(formulas: string): RollDiceModResult[] {
+function rollAllDices(formulas: string, rollType = 'default'): RollDiceModResult[] {
   const dices1 = formulas
     .trim()
     .replace(/[dㅇ]/g, 'D')
@@ -70,10 +76,10 @@ function rollAllDices(formulas: string): RollDiceModResult[] {
       const [ formula, loop, ] = diceString.split('*');
 
       for (let i = 0; i < +loop; i++) {
-        results.push(rollDiceMod(formula));
+        results.push(rollDiceMod(formula, rollType));
       }
     } else {
-      results.push(rollDiceMod(diceString));
+      results.push(rollDiceMod(diceString, rollType));
     }
   });
 
