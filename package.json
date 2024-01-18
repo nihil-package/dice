@@ -1,6 +1,6 @@
 {
   "name": "@nihilncunia/diceroll",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "description": "Roll the Dices!!",
   "main": "dist/index.js",
   "type": "module",
