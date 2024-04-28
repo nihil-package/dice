@@ -1,14 +1,36 @@
-type RollDiceResult = {
-  dice: string;
-  total: number;
-  details: number[];
-};
+type RollMode = 'default' | 'min' | 'max';
 
-type RollDiceModResult = {
+interface RollIndex {
+  number: number;
+  index: number;
+}
+
+type DiceResult = {
   formula: string;
-  diceTotal: number;
-  diceDetails: RollDiceResult[];
-  modDetails: number[];
+  total: number;
+  result: number[];
+  ignore: number[];
 };
 
-export type { RollDiceModResult, RollDiceResult };
+type RollDiceProps = {
+  formula: string;
+  mode?: RollMode;
+  isAdvantage?: boolean;
+  isDisAdvantage?: boolean;
+  selectCount?: number;
+};
+
+type RollResult = {
+  formula: string;
+  total: number;
+  dices: DiceResult[];
+  mod: number[];
+};
+
+export type {
+  RollDiceProps,
+  DiceResult,
+  RollIndex,
+  RollResult,
+  RollMode
+};

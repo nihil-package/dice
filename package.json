@@ -24,12 +24,12 @@
   },
   "homepage": "https://github.com/NIHILncunia/nihilncunia-diceroll#readme",
   "scripts": {
-    "prepack": "npm run build",
-    "build": "npm run clean && npm run build:tsc && npm run build:js",
+    "prepack": "yarn run build",
+    "build": "yarn run clean && yarn run build:tsc && yarn run build:js",
     "build:tsc": "tsc --emitDeclarationOnly",
     "build:js": "node build.js",
     "clean": "rm -rf dist",
-    "start": "ts-node src/index.ts"
+    "start:js": "yarn run prepack && node dist/index.js"
   },
   "keywords": [
     "dice",
