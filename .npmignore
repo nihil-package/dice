@@ -1,0 +1,12 @@
+/src
+/node_modules/
+/.idea/
+
+.env.*
+.env
+.DS_Store
+
+tsconfig.json
+tsup.config.ts
+.editorconfig
+.eslintrc.cjs
