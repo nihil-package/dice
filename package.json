@@ -20,7 +20,6 @@
   ],
   "author": "nihilncunia7556",
   "license": "MIT",
-  "dependencies": {},
   "devDependencies": {
     "@types/node": "^20.14.2",
     "@typescript-eslint/eslint-plugin": "^7.12.0",
