@@ -184,11 +184,8 @@ class Dice {
     }
 
     const [ dices, sides, ] = newFormula.split('D');
-    console.log(dices, sides);
     const newDices = +dices || 1;
     const sign = newDices > 0 ? '+' : '-';
-
-    console.log('newFormula >> ', newFormula);
 
     if (mode === 'min') {
       const result: number[] = [];
@@ -204,25 +201,20 @@ class Dice {
         })
       );
 
-      let finalResult: RollIndex[];
-      let ignore: RollIndex[];
-      let resultArray: number[];
-      let ignoreArray: number[];
+      let results: number[];
+      let ignores: number[];
       let diceString: string;
 
       if (isAdvantage) {
-        finalResult = result2
-          .sort((a, b) => b.number - a.number)
-          .slice(0, selectCount)
-          .sort((a, b) => a.index - b.index);
+        const sortedResult2 = result2
+          .sort((a, b) => b.number - a.number);
 
-        ignore = result2
-          .sort((a, b) => a.number - b.number)
-          .slice(0, selectCount)
+        const resultArray = sortedResult2.splice(0, selectCount)
           .sort((a, b) => a.index - b.index);
+        const ignoreArray = sortedResult2;
 
-        resultArray = finalResult.map((item) => item.number);
-        ignoreArray = ignore.map((item) => item.number);
+        results = resultArray.map((item) => item.number);
+        ignores = ignoreArray.map((item) => item.number);
 
         diceString = newDices === 1
           ? `D${sides}kh${selectCount}`
@@ -230,18 +222,15 @@ class Dice {
       }
 
       if (isDisAdvantage) {
-        finalResult = result2
-          .sort((a, b) => a.number - b.number)
-          .slice(0, selectCount)
-          .sort((a, b) => a.index - b.index);
+        const sortedResult2 = result2
+          .sort((a, b) => a.number - b.number);
 
-        ignore = result2
-          .sort((a, b) => b.number - a.number)
-          .slice(0, selectCount)
+        const resultArray = sortedResult2.splice(0, selectCount)
           .sort((a, b) => a.index - b.index);
+        const ignoreArray = sortedResult2;
 
-        resultArray = finalResult.map((item) => item.number);
-        ignoreArray = ignore.map((item) => item.number);
+        results = resultArray.map((item) => item.number);
+        ignores = ignoreArray.map((item) => item.number);
 
         diceString = newDices === 1
           ? `D${sides}kh${selectCount}`
@@ -249,7 +238,7 @@ class Dice {
       }
 
       const total = isAdvantage || isDisAdvantage
-        ? resultArray.reduce(
+        ? results.reduce(
           (pre, curr) => (pre + curr),
           0
         )
@@ -258,8 +247,8 @@ class Dice {
       return {
         formula: isAdvantage || isDisAdvantage ? diceString : formula,
         total: sign === '+' ? total : -total,
-        result: isAdvantage || isDisAdvantage ? resultArray : result,
-        ignore: isAdvantage || isDisAdvantage ? ignoreArray : [],
+        result: isAdvantage || isDisAdvantage ? results : result,
+        ignore: isAdvantage || isDisAdvantage ? ignores : [],
       };
     }
 
@@ -277,25 +266,20 @@ class Dice {
         })
       );
 
-      let finalResult: RollIndex[];
-      let ignore: RollIndex[];
-      let resultArray: number[];
-      let ignoreArray: number[];
+      let results: number[];
+      let ignores: number[];
       let diceString: string;
 
       if (isAdvantage) {
-        finalResult = result2
-          .sort((a, b) => b.number - a.number)
-          .slice(0, selectCount)
-          .sort((a, b) => a.index - b.index);
+        const sortedResult2 = result2
+          .sort((a, b) => b.number - a.number);
 
-        ignore = result2
-          .sort((a, b) => a.number - b.number)
-          .slice(0, selectCount)
+        const resultArray = sortedResult2.splice(0, selectCount)
           .sort((a, b) => a.index - b.index);
+        const ignoreArray = sortedResult2;
 
-        resultArray = finalResult.map((item) => item.number);
-        ignoreArray = ignore.map((item) => item.number);
+        results = resultArray.map((item) => item.number);
+        ignores = ignoreArray.map((item) => item.number);
 
         diceString = newDices === 1
           ? `D${sides}kh${selectCount}`
@@ -303,18 +287,15 @@ class Dice {
       }
 
       if (isDisAdvantage) {
-        finalResult = result2
-          .sort((a, b) => a.number - b.number)
-          .slice(0, selectCount)
-          .sort((a, b) => a.index - b.index);
+        const sortedResult2 = result2
+          .sort((a, b) => a.number - b.number);
 
-        ignore = result2
-          .sort((a, b) => b.number - a.number)
-          .slice(0, selectCount)
+        const resultArray = sortedResult2.splice(0, selectCount)
           .sort((a, b) => a.index - b.index);
+        const ignoreArray = sortedResult2;
 
-        resultArray = finalResult.map((item) => item.number);
-        ignoreArray = ignore.map((item) => item.number);
+        results = resultArray.map((item) => item.number);
+        ignores = ignoreArray.map((item) => item.number);
 
         diceString = newDices === 1
           ? `D${sides}kh${selectCount}`
@@ -322,7 +303,7 @@ class Dice {
       }
 
       const total = isAdvantage || isDisAdvantage
-        ? resultArray.reduce(
+        ? results.reduce(
           (pre, curr) => (pre + curr),
           0
         )
@@ -331,8 +312,8 @@ class Dice {
       return {
         formula: isAdvantage || isDisAdvantage ? diceString : formula,
         total: sign === '+' ? total : -total,
-        result: isAdvantage || isDisAdvantage ? resultArray : result,
-        ignore: isAdvantage || isDisAdvantage ? ignoreArray : [],
+        result: isAdvantage || isDisAdvantage ? results : result,
+        ignore: isAdvantage || isDisAdvantage ? ignores : [],
       };
     }
 
@@ -351,20 +332,17 @@ class Dice {
         })
       );
 
-      const finalResult = result2
-        .sort((a, b) => b.number - a.number)
-        .slice(0, selectCount)
+      const sortedResult2 = result2
+        .sort((a, b) => b.number - a.number);
+
+      const resultArray = sortedResult2.splice(0, selectCount)
         .sort((a, b) => a.index - b.index);
+      const ignoreArray = sortedResult2;
 
-      const ignore = result2
-        .sort((a, b) => a.number - b.number)
-        .slice(0, selectCount)
-        .sort((a, b) => a.index - b.index);
+      const results = resultArray.map((item) => item.number);
+      const ignores = ignoreArray.map((item) => item.number);
 
-      const resultArray = finalResult.map((item) => item.number);
-      const ignoreArray = ignore.map((item) => item.number);
-
-      const total = resultArray.reduce(
+      const total = results.reduce(
         (pre, curr) => (pre + curr),
         0
       );
@@ -374,8 +352,8 @@ class Dice {
           ? `D${sides}kh${selectCount}`
           : `${Math.abs(newDices)}D${sides}kh${selectCount}`,
         total: sign === '+' ? total : -total,
-        result: resultArray,
-        ignore: ignoreArray,
+        result: results,
+        ignore: ignores,
       };
     }
 
@@ -394,31 +372,28 @@ class Dice {
         })
       );
 
-      const finalResult = result2
-        .sort((a, b) => a.number - b.number)
-        .slice(0, selectCount)
+      const sortedResult2 = result2
+        .sort((a, b) => a.number - b.number);
+
+      const resultArray = sortedResult2.splice(0, selectCount)
         .sort((a, b) => a.index - b.index);
+      const ignoreArray = sortedResult2;
 
-      const ignore = result2
-        .sort((a, b) => b.number - a.number)
-        .slice(0, selectCount)
-        .sort((a, b) => a.index - b.index);
+      const results = resultArray.map((item) => item.number);
+      const ignores = ignoreArray.map((item) => item.number);
 
-      const resultArray = finalResult.map((item) => item.number);
-      const ignoreArray = ignore.map((item) => item.number);
-
-      const total = resultArray.reduce(
+      const total = results.reduce(
         (pre, curr) => (pre + curr),
         0
       );
 
       return {
         formula: newDices === 1
-          ? `D${sides}kh${selectCount}`
-          : `${Math.abs(newDices)}D${sides}kh${selectCount}`,
+          ? `D${sides}kl${selectCount}`
+          : `${Math.abs(newDices)}D${sides}kl${selectCount}`,
         total: sign === '+' ? total : -total,
-        result: resultArray,
-        ignore: ignoreArray,
+        result: results,
+        ignore: ignores,
       };
     }
 
@@ -510,12 +485,6 @@ class Dice {
     ];
   }
 }
-
-console.log(
-  Dice.rollToFormula({
-    formula: '4d20kl3',
-  })
-);
 
 export {
   Dice
