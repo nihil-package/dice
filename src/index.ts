@@ -360,3 +360,5 @@ class Dice {
 export {
   Dice
 };
+
+export * from './@types';
