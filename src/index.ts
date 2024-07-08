@@ -1,39 +1,15 @@
-type RollMode = 'default' | 'min' | 'max';
-
-interface RollIndex {
-  number: number;
-  index: number;
-}
-
-type DiceResult = {
-  formula: string;
-  total: number;
-  result: number[];
-  ignore: number[];
-};
-
-type RollDiceProps = {
-  formula: string;
-  mode?: RollMode;
-  isAdvantage?: boolean;
-  isDisAdvantage?: boolean;
-  selectCount?: number;
-};
-
-type RollResult = {
-  formula: string;
-  total: number;
-  dices: DiceResult[];
-  mod: number[];
-};
-
-export type {
-  RollDiceProps,
-  DiceResult,
-  RollIndex,
-  RollResult,
-  RollMode
-};
+import { findMultiple } from './utils/findMultiple';
+import { findKlDice } from './utils/findKlDice';
+import { findKhDice } from './utils/findKhDice';
+import { findMod } from './utils/findMod';
+import { findMainDice } from './utils/findMainDice';
+import { findSubDice } from './utils/findSubDice';
+import {
+  DiceItem, DiceResult, RollDiceProps, RollResult
+} from './@types';
+import { rollPerDice } from './utils/rollPerDice';
+import { disAdvantage } from './utils/disAdvantage';
+import { advantage } from './utils/advantage';
 
 class Dice {
   static rollToFormula(
@@ -56,12 +32,12 @@ class Dice {
   }
 
   static roll({ formula, mode, }: RollDiceProps): RollResult {
-    const mainDice = this.findMainDice(formula);
-    const subDice = this.findSubDice(formula);
-    const khDice = this.findKhDice(formula);
-    const klDice = this.findKlDice(formula);
-    const mod = this.findMod(formula);
-    const multiple = this.findMultiple(formula);
+    const mainDice = findMainDice(formula);
+    const subDice = findSubDice(formula);
+    const khDice = findKhDice(formula);
+    const klDice = findKlDice(formula);
+    const mod = findMod(formula);
+    const multiple = findMultiple(formula);
 
     const diceResults: DiceResult[] = [];
 
@@ -188,33 +164,27 @@ class Dice {
     const sign = newDices > 0 ? '+' : '-';
 
     if (mode === 'min') {
-      const result: number[] = [];
+      const result = rollPerDice({
+        mode: 'min',
+        sides: +sides,
+        dices: +dices,
+      });
 
-      for (let i = 0; i < Math.abs(newDices); i++) {
-        result.push(1);
-      }
-
-      const result2: RollIndex[] = result.map(
-        (item, index) => ({
-          number: item,
-          index,
-        })
-      );
-
-      let results: number[];
+      let results: DiceItem[];
       let ignores: number[];
       let diceString: string;
 
       if (isAdvantage) {
-        const sortedResult2 = result2
-          .sort((a, b) => b.number - a.number);
+        const {
+          results: adResults,
+          ignores: adIgnores,
+        } = advantage({
+          diceItems: result,
+          select: selectCount,
+        });
 
-        const resultArray = sortedResult2.splice(0, selectCount)
-          .sort((a, b) => a.index - b.index);
-        const ignoreArray = sortedResult2;
-
-        results = resultArray.map((item) => item.number);
-        ignores = ignoreArray.map((item) => item.number);
+        results = adResults;
+        ignores = adIgnores;
 
         diceString = newDices === 1
           ? `D${sides}kh${selectCount}`
@@ -222,15 +192,16 @@ class Dice {
       }
 
       if (isDisAdvantage) {
-        const sortedResult2 = result2
-          .sort((a, b) => a.number - b.number);
+        const {
+          results: disAdResults,
+          ignores: disAdIgnores,
+        } = advantage({
+          diceItems: result,
+          select: selectCount,
+        });
 
-        const resultArray = sortedResult2.splice(0, selectCount)
-          .sort((a, b) => a.index - b.index);
-        const ignoreArray = sortedResult2;
-
-        results = resultArray.map((item) => item.number);
-        ignores = ignoreArray.map((item) => item.number);
+        results = disAdResults;
+        ignores = disAdIgnores;
 
         diceString = newDices === 1
           ? `D${sides}kh${selectCount}`
@@ -239,10 +210,10 @@ class Dice {
 
       const total = isAdvantage || isDisAdvantage
         ? results.reduce(
-          (pre, curr) => (pre + curr),
+          (pre, curr) => (pre + curr.dice),
           0
         )
-        : result.reduce((pre, curr) => pre + curr, 0);
+        : result.reduce((pre, curr) => pre + curr.dice, 0);
 
       return {
         formula: isAdvantage || isDisAdvantage ? diceString : formula,
@@ -253,33 +224,27 @@ class Dice {
     }
 
     if (mode === 'max') {
-      const result: number[] = [];
+      const result = rollPerDice({
+        mode: 'max',
+        sides: +sides,
+        dices: +dices,
+      });
 
-      for (let i = 0; i < Math.abs(newDices); i++) {
-        result.push(+sides);
-      }
-
-      const result2: RollIndex[] = result.map(
-        (item, index) => ({
-          number: item,
-          index,
-        })
-      );
-
-      let results: number[];
+      let results: DiceItem[];
       let ignores: number[];
       let diceString: string;
 
       if (isAdvantage) {
-        const sortedResult2 = result2
-          .sort((a, b) => b.number - a.number);
+        const {
+          results: adResults,
+          ignores: adIgnores,
+        } = advantage({
+          diceItems: result,
+          select: selectCount,
+        });
 
-        const resultArray = sortedResult2.splice(0, selectCount)
-          .sort((a, b) => a.index - b.index);
-        const ignoreArray = sortedResult2;
-
-        results = resultArray.map((item) => item.number);
-        ignores = ignoreArray.map((item) => item.number);
+        results = adResults;
+        ignores = adIgnores;
 
         diceString = newDices === 1
           ? `D${sides}kh${selectCount}`
@@ -287,15 +252,16 @@ class Dice {
       }
 
       if (isDisAdvantage) {
-        const sortedResult2 = result2
-          .sort((a, b) => a.number - b.number);
+        const {
+          results: disAdResults,
+          ignores: disAdIgnores,
+        } = advantage({
+          diceItems: result,
+          select: selectCount,
+        });
 
-        const resultArray = sortedResult2.splice(0, selectCount)
-          .sort((a, b) => a.index - b.index);
-        const ignoreArray = sortedResult2;
-
-        results = resultArray.map((item) => item.number);
-        ignores = ignoreArray.map((item) => item.number);
+        results = disAdResults;
+        ignores = disAdIgnores;
 
         diceString = newDices === 1
           ? `D${sides}kh${selectCount}`
@@ -304,10 +270,10 @@ class Dice {
 
       const total = isAdvantage || isDisAdvantage
         ? results.reduce(
-          (pre, curr) => (pre + curr),
+          (pre, curr) => (pre + curr.dice),
           0
         )
-        : result.reduce((pre, curr) => pre + curr, 0);
+        : result.reduce((pre, curr) => pre + curr.dice, 0);
 
       return {
         formula: isAdvantage || isDisAdvantage ? diceString : formula,
@@ -318,34 +284,16 @@ class Dice {
     }
 
     if (isAdvantage) {
-      const result: number[] = [];
+      const result = rollPerDice({
+        mode: 'default',
+        sides: +sides,
+        dices: +dices,
+      });
 
-      for (let i = 0; i < Math.abs(newDices); i++) {
-        const number = Math.ceil(Math.random() * +sides);
-        result.push(number);
-      }
-
-      const result2: RollIndex[] = result.map(
-        (item, index) => ({
-          number: item,
-          index,
-        })
-      );
-
-      const sortedResult2 = result2
-        .sort((a, b) => b.number - a.number);
-
-      const resultArray = sortedResult2.splice(0, selectCount)
-        .sort((a, b) => a.index - b.index);
-      const ignoreArray = sortedResult2;
-
-      const results = resultArray.map((item) => item.number);
-      const ignores = ignoreArray.map((item) => item.number);
-
-      const total = results.reduce(
-        (pre, curr) => (pre + curr),
-        0
-      );
+      const { results, ignores, total, } = advantage({
+        diceItems: result,
+        select: selectCount,
+      });
 
       return {
         formula: newDices === 1
@@ -358,34 +306,16 @@ class Dice {
     }
 
     if (isDisAdvantage) {
-      const result: number[] = [];
+      const result = rollPerDice({
+        mode: 'default',
+        sides: +sides,
+        dices: +dices,
+      });
 
-      for (let i = 0; i < Math.abs(newDices); i++) {
-        const number = Math.ceil(Math.random() * +sides);
-        result.push(number);
-      }
-
-      const result2: RollIndex[] = result.map(
-        (item, index) => ({
-          number: item,
-          index,
-        })
-      );
-
-      const sortedResult2 = result2
-        .sort((a, b) => a.number - b.number);
-
-      const resultArray = sortedResult2.splice(0, selectCount)
-        .sort((a, b) => a.index - b.index);
-      const ignoreArray = sortedResult2;
-
-      const results = resultArray.map((item) => item.number);
-      const ignores = ignoreArray.map((item) => item.number);
-
-      const total = results.reduce(
-        (pre, curr) => (pre + curr),
-        0
-      );
+      const { results, ignores, total, } = disAdvantage({
+        diceItems: result,
+        select: selectCount,
+      });
 
       return {
         formula: newDices === 1
@@ -398,14 +328,13 @@ class Dice {
     }
 
     if (!isAdvantage && !isDisAdvantage) {
-      const result: number[] = [];
+      const result = rollPerDice({
+        mode: 'default',
+        sides: +sides,
+        dices: +dices,
+      });
 
-      for (let i = 0; i < Math.abs(newDices); i++) {
-        const number = Math.ceil(Math.random() * +sides);
-        result.push(number);
-      }
-
-      const total = result.reduce((pre, curr) => pre + curr, 0);
+      const total = result.reduce((pre, curr) => pre + curr.dice, 0);
 
       return {
         formula: newDices === 1
@@ -416,64 +345,6 @@ class Dice {
         ignore: [],
       };
     }
-  }
-
-  static findMainDice(formula: string) {
-    const mainDiceExp = /^\b(\d*[dD]\d+)\b/g;
-
-    const mainDiceMatch = formula.match(mainDiceExp)?.filter(
-      (item) => item !== ''
-    );
-
-    return mainDiceMatch || [];
-  }
-
-  static findSubDice(formula: string) {
-    const subDiceExp = /\b([+-]\d*[dD]\d+)\b/g;
-
-    const subDiceMatch = formula.match(subDiceExp)?.filter(
-      (item) => item !== ''
-    );
-
-    return subDiceMatch || [];
-  }
-
-  static findMod(formula: string) {
-    const modExp = /\b([+-]\d)\b/g;
-
-    const modMatch = formula.match(modExp)?.filter(
-      (item) => item !== ''
-    );
-
-    return modMatch || [];
-  }
-
-  static findKhDice(formula: string) {
-    const khExp = /\b([+-]?\d*[dD]\d+)kh\d+\b/g;
-
-    const khMatch = formula.match(khExp)?.filter(
-      (item) => item !== ''
-    );
-
-    return khMatch || [];
-  }
-
-  static findKlDice(formula: string) {
-    const klExp = /\b([+-]?\d*[dD]\d+)kl\d+\b/g;
-    const klMatch = formula.match(klExp)?.filter(
-      (item) => item !== ''
-    );
-
-    return klMatch || [];
-  }
-
-  static findMultiple(formula: string) {
-    const multipleExp = /\b([*]\d+)\b/g;
-    const multipleMatch = formula.match(multipleExp)?.filter(
-      (item) => item !== ''
-    );
-
-    return multipleMatch || [];
   }
 
   static preset() {
