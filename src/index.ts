@@ -167,7 +167,7 @@ class Dice {
       const result = rollPerDice({
         mode: 'min',
         sides: +sides,
-        dices: +dices,
+        dices: newDices,
       });
 
       let results: DiceItem[];
@@ -227,7 +227,7 @@ class Dice {
       const result = rollPerDice({
         mode: 'max',
         sides: +sides,
-        dices: +dices,
+        dices: newDices,
       });
 
       let results: DiceItem[];
@@ -287,7 +287,7 @@ class Dice {
       const result = rollPerDice({
         mode: 'default',
         sides: +sides,
-        dices: +dices,
+        dices: newDices,
       });
 
       const { results, ignores, total, } = advantage({
@@ -309,7 +309,7 @@ class Dice {
       const result = rollPerDice({
         mode: 'default',
         sides: +sides,
-        dices: +dices,
+        dices: newDices,
       });
 
       const { results, ignores, total, } = disAdvantage({
@@ -331,7 +331,7 @@ class Dice {
       const result = rollPerDice({
         mode: 'default',
         sides: +sides,
-        dices: +dices,
+        dices: newDices,
       });
 
       const total = result.reduce((pre, curr) => pre + curr.dice, 0);
