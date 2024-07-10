@@ -173,7 +173,7 @@ class Dice {
       });
 
       let results: DiceItem[];
-      let ignores: number[];
+      let ignores: DiceItem[];
       let diceString: string;
 
       if (isAdvantage) {
@@ -233,7 +233,7 @@ class Dice {
       });
 
       let results: DiceItem[];
-      let ignores: number[];
+      let ignores: DiceItem[];
       let diceString: string;
 
       if (isAdvantage) {

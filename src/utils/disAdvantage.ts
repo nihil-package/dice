@@ -24,7 +24,11 @@ export function disAdvantage({ diceItems, select, }: DisAdvantageProps) {
     isFumble: item.isFumble,
   }));
 
-  const ignores = ignoreArray.map((item) => item.number);
+  const ignores: DiceItem[] = ignoreArray.map((item) => ({
+    dice: item.number,
+    isCritical: item.isCritical,
+    isFumble: item.isFumble,
+  }));
 
   const total = results.reduce(
     (pre, curr) => (pre + curr.dice),

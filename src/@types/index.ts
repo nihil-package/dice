@@ -19,7 +19,10 @@ type RollFunctionProps = {
   dices: number;
 };
 
-type AdvantageProps = {};
+type AdvantageProps = {
+  diceItems: DiceItem[];
+  select: number;
+};
 
 type DisAdvantageProps = {
   diceItems: DiceItem[];
@@ -30,7 +33,7 @@ type DiceResult = {
   formula: string;
   total: number;
   result: DiceItem[];
-  ignore: number[];
+  ignore: DiceItem[];
 };
 
 type RollDiceProps = {
@@ -56,5 +59,6 @@ export type {
   RollMode,
   RollFunctionProps,
   DiceItem,
-  DisAdvantageProps
+  DisAdvantageProps,
+  AdvantageProps
 };

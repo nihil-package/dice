@@ -1,6 +1,8 @@
-import { DiceItem, DisAdvantageProps, RollIndex } from '../@types';
+import {
+  AdvantageProps, DiceItem, RollIndex
+} from '../@types';
 
-export function advantage({ diceItems, select, }: DisAdvantageProps) {
+export function advantage({ diceItems, select, }: AdvantageProps) {
   const array: RollIndex[] = diceItems.map(
     (item, index) => ({
       number: item.dice,
@@ -24,7 +26,11 @@ export function advantage({ diceItems, select, }: DisAdvantageProps) {
     isFumble: item.isFumble,
   }));
 
-  const ignores = ignoreArray.map((item) => item.number);
+  const ignores: DiceItem[] = ignoreArray.map((item) => ({
+    dice: item.number,
+    isCritical: item.isCritical,
+    isFumble: item.isFumble,
+  }));
 
   const total = results.reduce(
     (pre, curr) => (pre + curr.dice),
