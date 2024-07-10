@@ -118,10 +118,12 @@ class Dice {
     }
 
     if (subDice.length !== 0) {
-      diceResults.push(this.dice({
-        formula: subDice[0],
-        mode,
-      }));
+      subDice.forEach((item) => {
+        diceResults.push(this.dice({
+          formula: item,
+          mode,
+        }));
+      });
     }
 
     const modArray = mod.map((item) => +item);
