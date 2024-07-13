@@ -13,7 +13,7 @@
   "homepage": "https://github.com/nihil-package/dice#readme",
   "scripts": {
     "build": "tsup",
-    "node": "yarn run build && node './dist/index.js",
+    "node": "yarn run build && node ./dist/index.js",
     "patch": "yarn run build && npm version patch && npm publish",
     "minor": "yarn run build && npm version minor && npm publish",
     "major": "yarn run build && npm version major && npm publish"
