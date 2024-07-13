@@ -14,9 +14,9 @@
   "scripts": {
     "build": "tsup",
     "node": "yarn run build && node ./dist/index.js",
-    "patch": "yarn run build && npm version patch && npm publish",
-    "minor": "yarn run build && npm version minor && npm publish",
-    "major": "yarn run build && npm version major && npm publish"
+    "patch": "yarn run build && npm version patch",
+    "minor": "yarn run build && npm version minor",
+    "major": "yarn run build && npm version major"
   },
   "keywords": [
     "NIHILncunia",
