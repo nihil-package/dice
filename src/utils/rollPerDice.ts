@@ -1,4 +1,13 @@
+import * as crypto from 'crypto';
 import { DiceItem, RollFunctionProps } from '../@types';
+
+function genRandomNumber(start: number, end: number) {
+  const randomBuffer = new Uint32Array(1);
+  crypto.getRandomValues(randomBuffer);
+  const randomNumber = randomBuffer[0] / (0xffffffff + 1);
+
+  return Math.floor(randomNumber * (end - start + 1)) + start;
+}
 
 export function rollPerDice({ mode, sides, dices, }: RollFunctionProps) {
   const result: DiceItem[] = [];
@@ -19,7 +28,7 @@ export function rollPerDice({ mode, sides, dices, }: RollFunctionProps) {
     }
   } else if (mode === 'default') {
     for (let i = 0; i < Math.abs(dices); i++) {
-      const number = Math.ceil(Math.random() * +sides);
+      const number = genRandomNumber(1, +sides);
       result.push({
         dice: number,
         isCritical: number === +sides,
