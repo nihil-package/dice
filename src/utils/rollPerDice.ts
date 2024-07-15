@@ -35,8 +35,6 @@ export function rollPerDice({ mode, sides, dices, }: RollFunctionProps) {
     for (let i = 0; i < Math.abs(dices); i++) {
       const number = genRandomNumber(1, +sides);
 
-      console.log(number);
-
       result.push({
         dice: number,
         isCritical: number === +sides,
