@@ -359,6 +359,10 @@ class Dice {
   }
 }
 
+Dice.rollToFormula({
+  formula: 'd20+4',
+});
+
 export {
   Dice
 };
