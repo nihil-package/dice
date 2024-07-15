@@ -3,7 +3,12 @@ import { DiceItem, RollFunctionProps } from '../@types';
 
 function genRandomNumber(start: number, end: number) {
   const randomBuffer = new Uint32Array(1);
-  getRandomValues(randomBuffer);
+
+  if (typeof window !== 'undefined') {
+    window.crypto.getRandomValues(randomBuffer);
+  } else {
+    getRandomValues(randomBuffer);
+  }
   const randomNumber = randomBuffer[0] / (0xffffffff + 1);
 
   return Math.floor(randomNumber * (end - start + 1)) + start;
@@ -29,6 +34,8 @@ export function rollPerDice({ mode, sides, dices, }: RollFunctionProps) {
   } else if (mode === 'default') {
     for (let i = 0; i < Math.abs(dices); i++) {
       const number = genRandomNumber(1, +sides);
+
+      console.log(number);
 
       result.push({
         dice: number,
