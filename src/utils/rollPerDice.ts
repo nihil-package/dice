@@ -1,4 +1,4 @@
-import { getRandomValues } from 'node:crypto';
+import { getRandomValues } from 'crypto';
 import { DiceItem, RollFunctionProps } from '../@types';
 
 function genRandomNumber(start: number, end: number) {
