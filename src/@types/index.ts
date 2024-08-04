@@ -22,11 +22,15 @@ type RollFunctionProps = {
 type AdvantageProps = {
   diceItems: DiceItem[];
   select: number;
+  sides: number;
+  newDices: number;
 };
 
 type DisAdvantageProps = {
   diceItems: DiceItem[];
   select: number;
+  sides: number;
+  newDices: number;
 };
 
 type DiceResult = {
@@ -51,6 +55,11 @@ type RollResult = {
   mod: number[];
 };
 
+type RollError = {
+  errorNumber: number;
+  errorMessage: string;
+};
+
 export type {
   RollDiceProps,
   DiceResult,
@@ -60,5 +69,6 @@ export type {
   RollFunctionProps,
   DiceItem,
   DisAdvantageProps,
-  AdvantageProps
+  AdvantageProps,
+  RollError
 };

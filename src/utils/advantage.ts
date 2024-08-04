@@ -2,7 +2,9 @@ import {
   AdvantageProps, DiceItem, RollIndex
 } from '../@types';
 
-export function advantage({ diceItems, select, }: AdvantageProps) {
+export function advantage({
+  diceItems, select, sides, newDices,
+}: AdvantageProps) {
   const array: RollIndex[] = diceItems.map(
     (item, index) => ({
       number: item.dice,
@@ -37,9 +39,14 @@ export function advantage({ diceItems, select, }: AdvantageProps) {
     0
   );
 
+  const diceString = newDices === 1
+    ? `D${sides}kh${select}`
+    : `${Math.abs(newDices)}D${sides}kh${select}`;
+
   return {
     results,
     ignores,
     total,
+    diceString,
   };
 }

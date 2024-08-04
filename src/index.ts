@@ -5,17 +5,24 @@ import { findMod } from './utils/findMod';
 import { findMainDice } from './utils/findMainDice';
 import { findSubDice } from './utils/findSubDice';
 import {
-  DiceItem, DiceResult, RollDiceProps, RollResult
+  DiceResult, RollDiceProps, RollError, RollResult
 } from './@types';
 import { rollPerDice } from './utils/rollPerDice';
 import { disAdvantage } from './utils/disAdvantage';
 import { advantage } from './utils/advantage';
+import { errorCatch } from './utils/errorCatch';
 
 class Dice {
   static rollToFormula(
     { formula, mode = 'default', }: RollDiceProps
-  ): RollResult[] {
+  ): RollResult[] | RollError {
     const diceString = formula.replace(/[dㅇ]/g, 'D');
+
+    const isError = errorCatch(diceString);
+
+    if (isError.errorNumber !== 0) {
+      return isError;
+    }
 
     const stringArray = diceString.split(' ');
 
@@ -166,184 +173,160 @@ class Dice {
     const sign = newDices > 0 ? '+' : '-';
 
     if (mode === 'min') {
-      const result = rollPerDice({
+      const defaultResult = rollPerDice({
         mode: 'min',
         sides: +sides,
         dices: newDices,
       });
 
-      let results: DiceItem[];
-      let ignores: DiceItem[];
-      let diceString: string;
-
       if (isAdvantage) {
-        const {
-          results: adResults,
-          ignores: adIgnores,
-        } = advantage({
-          diceItems: result,
+        const adItems = advantage({
+          diceItems: defaultResult,
           select: selectCount,
+          sides: +sides,
+          newDices,
         });
 
-        results = adResults;
-        ignores = adIgnores;
-
-        diceString = newDices === 1
-          ? `D${sides}kh${selectCount}`
-          : `${Math.abs(newDices)}D${sides}kh${selectCount}`;
+        return {
+          total: sign === '+' ? adItems.total : -adItems.total,
+          formula: adItems.diceString,
+          result: adItems.results,
+          ignore: adItems.ignores,
+        };
       }
 
       if (isDisAdvantage) {
-        const {
-          results: disAdResults,
-          ignores: disAdIgnores,
-        } = advantage({
-          diceItems: result,
+        const disAdItems = disAdvantage({
+          diceItems: defaultResult,
           select: selectCount,
+          sides: +sides,
+          newDices,
         });
 
-        results = disAdResults;
-        ignores = disAdIgnores;
-
-        diceString = newDices === 1
-          ? `D${sides}kh${selectCount}`
-          : `${Math.abs(newDices)}D${sides}kl${selectCount}`;
+        return {
+          total: sign === '+' ? disAdItems.total : -disAdItems.total,
+          formula: disAdItems.diceString,
+          result: disAdItems.results,
+          ignore: disAdItems.ignores,
+        };
       }
 
-      const total = isAdvantage || isDisAdvantage
-        ? results.reduce(
-          (pre, curr) => (pre + curr.dice),
-          0
-        )
-        : result.reduce((pre, curr) => pre + curr.dice, 0);
+      const total = defaultResult.reduce((pre, curr) => pre + curr.dice, 0);
+
+      const diceString = newDices === 1
+        ? `D${+sides}`
+        : `${Math.abs(newDices)}D${+sides}`;
 
       return {
-        formula: isAdvantage || isDisAdvantage ? diceString : formula,
+        formula: diceString,
         total: sign === '+' ? total : -total,
-        result: isAdvantage || isDisAdvantage ? results : result,
-        ignore: isAdvantage || isDisAdvantage ? ignores : [],
+        result: defaultResult,
+        ignore: [],
       };
     }
 
     if (mode === 'max') {
-      const result = rollPerDice({
+      const defaultResult = rollPerDice({
         mode: 'max',
         sides: +sides,
         dices: newDices,
       });
 
-      let results: DiceItem[];
-      let ignores: DiceItem[];
-      let diceString: string;
-
       if (isAdvantage) {
-        const {
-          results: adResults,
-          ignores: adIgnores,
-        } = advantage({
-          diceItems: result,
+        const adItems = advantage({
+          diceItems: defaultResult,
           select: selectCount,
+          sides: +sides,
+          newDices,
         });
 
-        results = adResults;
-        ignores = adIgnores;
-
-        diceString = newDices === 1
-          ? `D${sides}kh${selectCount}`
-          : `${Math.abs(newDices)}D${sides}kh${selectCount}`;
+        return {
+          total: sign === '+' ? adItems.total : -adItems.total,
+          formula: adItems.diceString,
+          result: adItems.results,
+          ignore: adItems.ignores,
+        };
       }
 
       if (isDisAdvantage) {
-        const {
-          results: disAdResults,
-          ignores: disAdIgnores,
-        } = advantage({
-          diceItems: result,
+        const disAdItems = disAdvantage({
+          diceItems: defaultResult,
           select: selectCount,
+          sides: +sides,
+          newDices,
         });
 
-        results = disAdResults;
-        ignores = disAdIgnores;
-
-        diceString = newDices === 1
-          ? `D${sides}kh${selectCount}`
-          : `${Math.abs(newDices)}D${sides}kl${selectCount}`;
+        return {
+          total: sign === '+' ? disAdItems.total : -disAdItems.total,
+          formula: disAdItems.diceString,
+          result: disAdItems.results,
+          ignore: disAdItems.ignores,
+        };
       }
 
-      const total = isAdvantage || isDisAdvantage
-        ? results.reduce(
-          (pre, curr) => (pre + curr.dice),
-          0
-        )
-        : result.reduce((pre, curr) => pre + curr.dice, 0);
+      const total = defaultResult.reduce((pre, curr) => pre + curr.dice, 0);
+
+      const diceString = newDices === 1
+        ? `D${+sides}`
+        : `${Math.abs(newDices)}D${+sides}`;
 
       return {
-        formula: isAdvantage || isDisAdvantage ? diceString : formula,
+        formula: diceString,
         total: sign === '+' ? total : -total,
-        result: isAdvantage || isDisAdvantage ? results : result,
-        ignore: isAdvantage || isDisAdvantage ? ignores : [],
+        result: defaultResult,
+        ignore: [],
       };
     }
 
-    if (isAdvantage) {
-      const result = rollPerDice({
+    if (mode === 'default') {
+      const defaultResult = rollPerDice({
         mode: 'default',
         sides: +sides,
         dices: newDices,
       });
 
-      const { results, ignores, total, } = advantage({
-        diceItems: result,
-        select: selectCount,
-      });
+      if (isAdvantage) {
+        const adItems = advantage({
+          diceItems: defaultResult,
+          select: selectCount,
+          sides: +sides,
+          newDices,
+        });
+
+        return {
+          total: sign === '+' ? adItems.total : -adItems.total,
+          formula: adItems.diceString,
+          result: adItems.results,
+          ignore: adItems.ignores,
+        };
+      }
+
+      if (isDisAdvantage) {
+        const disAdItems = disAdvantage({
+          diceItems: defaultResult,
+          select: selectCount,
+          sides: +sides,
+          newDices,
+        });
+
+        return {
+          total: sign === '+' ? disAdItems.total : -disAdItems.total,
+          formula: disAdItems.diceString,
+          result: disAdItems.results,
+          ignore: disAdItems.ignores,
+        };
+      }
+
+      const total = defaultResult.reduce((pre, curr) => pre + curr.dice, 0);
+
+      const diceString = newDices === 1
+        ? `D${+sides}`
+        : `${Math.abs(newDices)}D${+sides}`;
 
       return {
-        formula: newDices === 1
-          ? `D${sides}kh${selectCount}`
-          : `${Math.abs(newDices)}D${sides}kh${selectCount}`,
+        formula: diceString,
         total: sign === '+' ? total : -total,
-        result: results,
-        ignore: ignores,
-      };
-    }
-
-    if (isDisAdvantage) {
-      const result = rollPerDice({
-        mode: 'default',
-        sides: +sides,
-        dices: newDices,
-      });
-
-      const { results, ignores, total, } = disAdvantage({
-        diceItems: result,
-        select: selectCount,
-      });
-
-      return {
-        formula: newDices === 1
-          ? `D${sides}kl${selectCount}`
-          : `${Math.abs(newDices)}D${sides}kl${selectCount}`,
-        total: sign === '+' ? total : -total,
-        result: results,
-        ignore: ignores,
-      };
-    }
-
-    if (!isAdvantage && !isDisAdvantage) {
-      const result = rollPerDice({
-        mode: 'default',
-        sides: +sides,
-        dices: newDices,
-      });
-
-      const total = result.reduce((pre, curr) => pre + curr.dice, 0);
-
-      return {
-        formula: newDices === 1
-          ? `D${+sides}`
-          : `${Math.abs(newDices)}D${+sides}`,
-        total: sign === '+' ? total : -total,
-        result,
+        result: defaultResult,
         ignore: [],
       };
     }
@@ -358,10 +341,6 @@ class Dice {
     ];
   }
 }
-
-Dice.rollToFormula({
-  formula: 'd20+4',
-});
 
 export {
   Dice
