@@ -17,7 +17,7 @@ export function errorCatch(diceString: string) {
   if (ddFind.length !== 0) {
     return {
       errorNumber: 2,
-      errorMessage: '주사위식에 D가 여러개 적인 부분이 있습니다.',
+      errorMessage: '주사위식에 D가 여러개 적힌 부분이 있습니다.',
     } satisfies RollError;
   }
 
